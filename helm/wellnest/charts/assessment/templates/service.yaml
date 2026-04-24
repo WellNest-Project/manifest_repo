@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: assessment-service
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: assessment-service
+    app.kubernetes.io/part-of: wellnest
+    app.kubernetes.io/managed-by: Helm
+    environment: {{ .Values.global.environment }}
+spec:
+  type: ClusterIP
+  selector:
+    app: assessment-service
+  ports:
+    - name: http
+      port: {{ .Values.global.services.assessment.port }}
+      targetPort: {{ .Values.global.services.assessment.port }}
+      protocol: TCP

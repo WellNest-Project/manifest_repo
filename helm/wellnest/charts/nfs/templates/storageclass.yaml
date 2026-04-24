@@ -1,0 +1,14 @@
+{{- if .Values.enabled }}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ .Values.storageClassName }}
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+provisioner: {{ .Values.provisioner }}
+parameters:
+  onDelete: "retain"
+  pathPattern: "${.PVC.namespace}/${.PVC.name}"
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+{{- end }}

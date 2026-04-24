@@ -1,0 +1,86 @@
+# Assessment service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: assessment-service
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: assessment-service
+    app.kubernetes.io/part-of: wellnest
+    app.kubernetes.io/managed-by: Helm
+    environment: {{ .Values.global.environment }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: assessment-service
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: assessment-service
+        environment: {{ .Values.global.environment }}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: assessment-service
+          image: docker.io/{{ .Values.global.dockerUsername }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.global.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.global.services.assessment.port }}
+              name: http
+              protocol: TCP
+          env:
+            - name: PORT
+              value: {{ .Values.global.services.assessment.port | quote }}
+            - name: NODE_ENV
+              value: {{ .Values.global.environment | quote }}
+            - name: FRONTEND_URL
+              value: {{ .Values.global.urls.frontend | quote }}
+            - name: JWT_EXPIRY
+              value: {{ .Values.global.jwt.expiry | quote }}
+            - name: AUTH_SERVICE_URL
+              value: "http://{{ .Values.global.services.auth.host }}.{{ .Values.global.namespace }}.svc.cluster.local:{{ .Values.global.services.auth.port }}"
+            - name: RUN_SEED
+              value: {{ .Values.runSeed | quote }}
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: wellnest-secrets
+                  key: MONGODB_URI
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: wellnest-secrets
+                  key: JWT_SECRET
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.global.services.assessment.port }}
+            initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.liveness.periodSeconds }}
+            timeoutSeconds: {{ .Values.probes.liveness.timeoutSeconds }}
+            failureThreshold: {{ .Values.probes.liveness.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.global.services.assessment.port }}
+            initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+            timeoutSeconds: {{ .Values.probes.readiness.timeoutSeconds }}
+            failureThreshold: {{ .Values.probes.readiness.failureThreshold }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop: ["ALL"]

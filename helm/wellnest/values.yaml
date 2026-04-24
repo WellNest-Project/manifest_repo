@@ -1,0 +1,178 @@
+# WellNest Helm Chart — Base Values
+
+global:
+  namespace: wellnest
+  environment: base
+  dockerUsername: bharath44623
+  image:
+    pullPolicy: Always
+  mongodb:
+    replicaSetName: rs0
+    database: wellnest
+    port: 27017
+  jwt:
+    expiry: 24h
+    algorithm: HS256
+  urls:
+    frontend: http://wellnest.local
+  services:
+    auth:
+      host: auth-service
+      port: 3001
+    assessment:
+      host: assessment-service
+      port: 3002
+    therapist:
+      host: therapist-service
+      port: 3003
+
+auth:
+  replicaCount: 1
+  image:
+    repository: wellnest-auth-service
+    tag: "1.0.0.0"
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 300m
+      memory: 256Mi
+  probes:
+    liveness:
+      initialDelaySeconds: 30
+      periodSeconds: 20
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readiness:
+      initialDelaySeconds: 15
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+
+assessment:
+  replicaCount: 1
+  runSeed: "true"
+  image:
+    repository: wellnest-assessment-service
+    tag: "1.0.0.0"
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 300m
+      memory: 256Mi
+  probes:
+    liveness:
+      initialDelaySeconds: 30
+      periodSeconds: 20
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readiness:
+      initialDelaySeconds: 15
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+
+therapist:
+  replicaCount: 1
+  image:
+    repository: wellnest-therapist-service
+    tag: "1.0.0.0"
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 300m
+      memory: 256Mi
+  probes:
+    liveness:
+      initialDelaySeconds: 30
+      periodSeconds: 20
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readiness:
+      initialDelaySeconds: 15
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+
+frontend:
+  replicaCount: 1
+  image:
+    repository: wellnest-frontend
+    tag: "1.0.0.0"
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+  rollout:
+    autoPromotionEnabled: false
+    scaleDownDelaySeconds: 30
+    previewReplicaCount: 1
+  hpa:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+    cpuUtilization: 70
+    memoryUtilization: 80
+  probes:
+    liveness:
+      initialDelaySeconds: 15
+      periodSeconds: 20
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readiness:
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+
+mongo:
+  replicaCount: 3
+  image:
+    tag: "7.0"
+  storage:
+    size: 2Gi
+    storageClassName: nfs-client
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  probes:
+    liveness:
+      initialDelaySeconds: 30
+      periodSeconds: 20
+      timeoutSeconds: 10
+      failureThreshold: 3
+    readiness:
+      initialDelaySeconds: 15
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+
+nfs:
+  enabled: false
+  serverIP: 172.31.90.107
+  serverPath: /srv/nfs/kubedata
+  storageClassName: nfs-client
+  provisioner: k8s-sigs.io/nfs-subdir-external-provisioner
+  image:
+    repository: registry.k8s.io/sig-storage/nfs-subdir-external-provisioner
+    tag: v4.0.2
+
+gateway:
+  enabled: true
+  gatewayClassName: kgateway
+  hostname: wellnest.local
+
+networkPolicy:
+  enabled: true
