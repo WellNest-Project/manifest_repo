@@ -8,7 +8,7 @@ auth:
   replicaCount: 1
   image:
     repository: wellnest-auth-service
-    tag: "3024658"
+    tag: "07eb00f"
   resources:
     requests:
       cpu: 100m
