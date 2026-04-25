@@ -1,5 +1,5 @@
 # WellNest Helm Chart — Base Values
-
+# 
 global:
   namespace: wellnest
   environment: base
@@ -25,12 +25,11 @@ global:
     therapist:
       host: therapist-service
       port: 3003
-
 auth:
   replicaCount: 1
   image:
     repository: wellnest-auth-service
-    tag: "1.0.0.0"
+    tag: "v0.0.1"
   resources:
     requests:
       cpu: 100m
@@ -49,7 +48,6 @@ auth:
       periodSeconds: 10
       timeoutSeconds: 5
       failureThreshold: 3
-
 assessment:
   replicaCount: 1
   runSeed: "true"
@@ -74,7 +72,6 @@ assessment:
       periodSeconds: 10
       timeoutSeconds: 5
       failureThreshold: 3
-
 therapist:
   replicaCount: 1
   image:
@@ -98,7 +95,6 @@ therapist:
       periodSeconds: 10
       timeoutSeconds: 5
       failureThreshold: 3
-
 frontend:
   replicaCount: 1
   image:
@@ -132,7 +128,6 @@ frontend:
       periodSeconds: 10
       timeoutSeconds: 5
       failureThreshold: 3
-
 mongo:
   replicaCount: 3
   image:
@@ -158,7 +153,6 @@ mongo:
       periodSeconds: 10
       timeoutSeconds: 5
       failureThreshold: 3
-
 nfs:
   enabled: false
   serverIP: 172.31.90.107
@@ -168,11 +162,9 @@ nfs:
   image:
     repository: registry.k8s.io/sig-storage/nfs-subdir-external-provisioner
     tag: v4.0.2
-
 gateway:
   enabled: true
   gatewayClassName: kgateway
   hostname: wellnest.local
-
 networkPolicy:
   enabled: true

@@ -4,12 +4,11 @@ global:
   environment: prod
   urls:
     frontend: http://wellnest-prod.local
-
 auth:
   replicaCount: 2
   image:
     repository: wellnest-auth-service
-    tag: "1.0.0.0"
+    tag: "v0.0.1"
   resources:
     requests:
       cpu: 200m
@@ -17,7 +16,6 @@ auth:
     limits:
       cpu: 500m
       memory: 512Mi
-
 assessment:
   replicaCount: 2
   image:
@@ -30,7 +28,6 @@ assessment:
     limits:
       cpu: 500m
       memory: 512Mi
-
 therapist:
   replicaCount: 2
   image:
@@ -43,7 +40,6 @@ therapist:
     limits:
       cpu: 500m
       memory: 512Mi
-
 frontend:
   replicaCount: 2
   image:
@@ -59,13 +55,10 @@ frontend:
   hpa:
     minReplicas: 2
     maxReplicas: 5
-
 mongo:
   storage:
     size: 5Gi
-
 nfs:
   enabled: false
-
 gateway:
   hostname: wellnest-prod.local
