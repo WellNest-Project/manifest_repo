@@ -20,7 +20,7 @@ assessment:
   replicaCount: 1
   image:
     repository: wellnest-assessment-service
-    tag: "1.0.0.0"
+    tag: "ab553f7"
   resources:
     requests:
       cpu: 100m
