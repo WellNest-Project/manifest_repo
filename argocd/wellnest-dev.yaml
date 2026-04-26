@@ -18,10 +18,6 @@ spec:
     server: https://kubernetes.default.svc
     namespace: wellnest-dev
   ignoreDifferences:
-    - group: argoproj.io
-      kind: Rollout
-      jsonPointers:
-        - /spec/template/spec/containers/0/image
     - group: apps
       kind: StatefulSet
       jsonPointers:
@@ -38,5 +34,4 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-      - ServerSideApply=true
       - RespectIgnoreDifferences=true
