@@ -44,7 +44,7 @@ frontend:
   replicaCount: 1
   image:
     repository: wellnest-frontend
-    tag: "d24c9a3"
+    tag: "1fcf017"
   resources:
     requests:
       cpu: 50m
