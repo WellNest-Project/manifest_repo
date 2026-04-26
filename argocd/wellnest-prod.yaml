@@ -30,6 +30,8 @@ spec:
       kind: HTTPRoute
       jsonPointers:
         - /spec/rules
+        - /spec/parentRefs
+        - /metadata/finalizers
   syncPolicy:
     automated:
       prune: true
